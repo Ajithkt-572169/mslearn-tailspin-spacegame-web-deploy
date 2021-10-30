@@ -6,7 +6,7 @@ stages:
   - stage: 'Build'
     displayName: 'Build the web application'
     jobs:
-      - job: Build
+      - job: 'Build'
         displayName: 'Build job'
         pool:
           vmImage: 'ubuntu-20.04'
@@ -45,7 +45,7 @@ stages:
           - task: DotNetCoreCLI@2
             displayName: 'Publish the project - $(buildConfiguration)'
             inputs:
-              command: publish
+              command: 'publish'
               projects: '**/*.csproj'
               publishWebProjects: false
               arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
@@ -56,12 +56,12 @@ stages:
     displayName: 'Deploy the web application'
     dependsOn: 'Build'
     jobs:
-      - deployment: 'Deploy'
+      - deployment: Deploy
         pool:
         vmImage: 'ubuntu-20.04'
         environment: dev
         variables:
-        - group: 'Release'
+        - group: Release
         strategy: 
           runOnce: 
             deploy: 
@@ -71,6 +71,6 @@ stages:
                 - task: AzureWebApp@1
                   displayName: 'Azure App Service Deploy: website'
                   inputs: 
-                    azureSubscription: Resource Manager - Tailspin - Space Game
+                    azureSubscription: 'Resource Manager - Tailspin - Space Game'
                     appName: $(WebAppName)
                     package: $(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip
