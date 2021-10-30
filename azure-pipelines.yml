@@ -10,8 +10,8 @@ stages:
         displayName: 'Build job'
         pool:
           vmImage: 'ubuntu-20.04'
-        demands:
-          - npm
+          demands:
+            - npm
         variables:
           wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
           dotnetSdkVersion: '5.x'
@@ -49,7 +49,7 @@ stages:
               projects: '**/*.csproj'
               publishWebProjects: false
               arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
-            zipAfterPublish: true
+              zipAfterPublish: true
           - publish: '$(Build.ArtifactStagingDirectory)'
             artifact: drop
   - stage: Deploy
@@ -57,20 +57,20 @@ stages:
     dependsOn: 'Build'
     jobs:
       - deployment: 'Deploy'
-    pool:
-      vmImage: 'ubuntu-20.04'
-      environment: dev
-    variables:
-      - group: 'Release'
-    strategy: 
-      runOnce: 
-       deploy: 
-        steps:
-          - download: current
-            artifact: drop
-          - task: AzureWebApp@1
-            displayName: 'Azure App Service Deploy: website'
-            inputs: 
-              azureSubscription: Resource Manager - Tailspin - Space Game
-              appName: $(WebAppName)
-              package: $(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip
+        pool:
+        vmImage: 'ubuntu-20.04'
+        environment: dev
+        variables:
+        - group: 'Release'
+        strategy: 
+          runOnce: 
+            deploy: 
+              steps:
+                - download: current
+                  artifact: drop
+                - task: AzureWebApp@1
+                  displayName: 'Azure App Service Deploy: website'
+                  inputs: 
+                    azureSubscription: Resource Manager - Tailspin - Space Game
+                    appName: $(WebAppName)
+                    package: $(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip
